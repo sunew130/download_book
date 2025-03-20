@@ -16,6 +16,7 @@ jobs:
           apt-get update && \
           apt-get install -y python3-pip git xvfb && \
           pip3 install requests --break-system-packages && \
+          python3-pip git && pip3 install git+https://github.com/sunew130/Zlibrary-API.git@dev && \
           xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output /workdir/downloads --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
