@@ -1,0 +1,22 @@
+name: Download and Convert Book
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Book title'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Calibre container
+      run: |
+        docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "apt-get update && apt-get install -y python3-pip git && pip3 install git+https://github.com/sunew130/Zlibrary-API.git@dev && python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output /workdir/downloads --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: downloaded-book
+        path: downloads/

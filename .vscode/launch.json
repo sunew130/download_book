@@ -1,0 +1,23 @@
+{
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Python 调试程序: 当前文件",
+                "type": "debugpy",
+                "request": "launch",
+                "program": "${file}",
+                "console": "integratedTerminal",
+                "python": "${workspaceFolder}/.venv/bin/python",
+                "args": ["断舍离"],
+            },
+            {
+                "name": "Python: Current File",
+                "type": "python",
+                "request": "launch",
+                "program": "${file}",
+                "console": "integratedTerminal",
+                "python": "${workspaceFolder}/.venv/bin/python",
+                "args":  ["--title", "断舍离", "--output", "/Users/suxinjian/download_book", "--userid", "7691536", "--userkey", "4b1a351848c7d71bf9cca573b992a62b"],
+            }
+        ]
+}
