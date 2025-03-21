@@ -1,10 +1,12 @@
 name: Download and Convert Book
+
 on:
   workflow_dispatch:
     inputs:
       title:
         description: 'Book title'
         required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,12 +14,12 @@ jobs:
     - uses: actions/checkout@v4
     - name: Run Calibre container
       run: |
-        docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "\
-          apt-get update && \
-          apt-get install -y python3-pip git xvfb && \
-          pip3 install requests --break-system-packages && \
-          xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output /workdir/downloads --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
-    - name: Upload Artifact
+            docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "\
+              apt-get update && echo 'Update done' && \
+              apt-get install -y python3-pip git xvfb && echo 'Install done' && \
+              python3 -m pip install requests --break-system-packages && echo 'Pip done' && \
+              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output /workdir/downloads --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: downloaded-book
