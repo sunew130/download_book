@@ -52,12 +52,19 @@ jobs:
                 sudo chmod -R 755 ./downloads
                 ls -la ./downloads/$(basename ${{ env.OUTPUT_PATH }}) || echo "Failed to list directory after chmod"
         
-    - name: Upload artifact
+    - name: Upload artifact (wildcard)
       uses: actions/upload-artifact@v4
       with:
-                name: ebook-${{ github.event.inputs.title }}
-                path: "./downloads/$(basename ${{ env.OUTPUT_PATH }})/*.epub"
-                if-no-files-found: warn
+                  name: ebook-${{ github.event.inputs.title }}-wildcard
+                  path: "./downloads/$(basename ${{ env.OUTPUT_PATH }})/*.epub"
+                  if-no-files-found: warn
+          
+    - name: Upload artifact (exact)
+      uses: actions/upload-artifact@v4
+      with:
+                  name: ebook-${{ github.event.inputs.title }}-exact
+                  path: "./downloads/$(basename ${{ env.OUTPUT_PATH }})/*.epub"
+                  if-no-files-found: warn
 
     # 新增：微信通知模块
     - name: Send WeChat notification
