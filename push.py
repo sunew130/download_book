@@ -103,6 +103,7 @@ def push(content, method):
         chat_id = TELEGRAM_CHAT_ID
         return notifier.push_telegram(content, bot_token, chat_id)
     elif method == "wxpusher":
+        print(f"WXPUSHER_SPT {WXPUSHER_SPT} content {content}")
         logger.info("WXPUSHER_SPT: %s  content:%s", WXPUSHER_SPT, content)
         return notifier.push_wxpusher(content, WXPUSHER_SPT)
     else:
