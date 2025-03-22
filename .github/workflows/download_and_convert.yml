@@ -40,6 +40,7 @@ jobs:
       run: |
                 echo "Checking OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
                 BASENAME=$(basename ${{ env.OUTPUT_PATH }})
+                echo "BASENAME=$BASENAME" >> $GITHUB_ENV
                 echo "Mapped host path: ./downloads/$BASENAME"
                 ls -la "./downloads/$BASENAME" || echo "No files found in ./downloads/$BASENAME"
                 echo "Listing ./downloads directory:"
@@ -56,14 +57,14 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}-exact
-        path: ./downloads/$(BASENAME)/${{ github.event.inputs.title }}.epub
+        path: ./downloads/${{env.BASENAME}}/${{ github.event.inputs.title }}.epub
         if-no-files-found: warn
           
     - name: Upload artifact (exact)
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}-exact
-        path: ./downloads/$(BASENAME)/${{ github.event.inputs.title }}.epub
+        path: ./downloads/${{env.BASENAME}}/${{ github.event.inputs.title }}.epub
         if-no-files-found: warn
 
     # 新增：微信通知模块
