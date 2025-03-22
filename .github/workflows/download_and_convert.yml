@@ -38,29 +38,26 @@ jobs:
               
     - name: Debug output path
       run: |
-          echo "Checking OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
-          BASENAME=$(basename ${{ env.OUTPUT_PATH }})
-          echo "Mapped host path: ./downloads/$BASENAME"
-          ls -la "./downloads/$BASENAME" || echo "No files found in ./downloads/$BASENAME"
-          echo "Listing ./downloads directory:"
-          ls -la ./downloads || echo "No ./downloads directory found"
-          echo "Testing artifact path: ./downloads/$BASENAME/*.epub"
-          ls -la "./downloads/$BASENAME/*.epub" || echo "No .epub files found"
+                echo "Checking OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
+                BASENAME=$(basename ${{ env.OUTPUT_PATH }})
+                echo "Mapped host path: ./downloads/$BASENAME"
+                ls -la "./downloads/$BASENAME" || echo "No files found in ./downloads/$BASENAME"
+                echo "Listing ./downloads directory:"
+                ls -la ./downloads || echo "No ./downloads directory found"
+                echo "Testing artifact path with wildcard:"
+                ls -la "./downloads/$BASENAME/*.epub" || echo "No .epub files found with wildcard"
         
     - name: Fix permissions
       run: |
-          sudo chmod -R 755 ./downloads
-          ls -la ./downloads/$(basename ${{ env.OUTPUT_PATH }})
+                sudo chmod -R 755 ./downloads
+                ls -la ./downloads/$(basename ${{ env.OUTPUT_PATH }}) || echo "Failed to list directory after chmod"
         
-            - name: Upload artifact
-              uses: actions/upload-artifact@v4
-              with:
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
                 name: ebook-${{ github.event.inputs.title }}
                 path: "./downloads/$(basename ${{ env.OUTPUT_PATH }})/*.epub"
                 if-no-files-found: warn
-                compression-level: 6
-                overwrite: false
-                include-hidden-files: false
 
     # 新增：微信通知模块
     - name: Send WeChat notification
