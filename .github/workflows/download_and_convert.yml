@@ -15,36 +15,41 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    # 新增：创建带时间戳的下载目录
     - name: Create timestamp directory
       run: |
         TIMESTAMP=$(date +%Y%m%d-%H%M%S)
         echo "OUTPUT_PATH=$OUTPUT_DIR/${TIMESTAMP}_${{ github.event.inputs.title }}" >> $GITHUB_ENV
+        echo "Created OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
 
-    # Calibre 容器优化版
     - name: Run Calibre container
-      run: | 
-            docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "\
-              apt-get update && echo 'Update done' && \
-              apt-get install -y python3-pip git xvfb && echo 'Install done' && \
-              python3 -m pip install requests --break-system-packages && echo 'Pip done' && \
-              python3 -m pip install git+https://github.com/sunew130/Zlibrary-API.git@dev --break-system-packages && \
-              mkdir -p $OUTPUT_PATH && \
-              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
-    # 产物上传优化
+      run: |
+        docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "\
+          apt-get update && echo 'Update done' && \
+          apt-get install -y python3-pip git xvfb x11-utils && echo 'Install done' && \
+          python3 -m pip install requests --break-system-packages && echo 'Pip done' && \
+          python3 -m pip install git+https://github.com/sunew130/Zlibrary-API.git@dev --break-system-packages && \
+          mkdir -p $OUTPUT_PATH && \
+          Xvfb :1 -screen 0 1024x768x16 & echo 'Xvfb started' && \
+          DISPLAY=:1 xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}' && \
+          echo 'Download complete, listing files:' && \
+          ls -la $OUTPUT_PATH"
+
+    - name: Debug output path
+      run: |
+        echo "Checking OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
+        ls -la ${{ env.OUTPUT_PATH }} || echo "No files found in ${{ env.OUTPUT_PATH }}"
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}
-        path: "${{ env.OUTPUT_PATH }}/*"   
+        path: "${{ env.OUTPUT_PATH }}/*"
+        if-no-files-found: warn  # 如果没找到文件，只警告而不失败
 
-    # 新增：微信通知模块
     - name: Send WeChat notification
       env:
         WXPUSHER_SPT: ${{ secrets.WXPUSHER_SPT }}
       run: |
-            DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            python3 push.py \
-            "【电子书下载完成】${{ github.event.inputs.title }}.epub 已就绪\n🔗下载地址：$DOWNLOAD_URL\n📖打开方式：微信→文件→其他应用打开→选择阅读器" ${{ secrets.PUSH_METHOD }}
-
-
+        DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+        python3 push.py \
+        "【电子书下载完成】${{ github.event.inputs.title }}.epub 已就绪\n🔗下载地址：$DOWNLOAD_URL\n📖打开方式：微信→文件→其他应用打开→选择阅读器" ${{ secrets.PUSH_METHOD }}
