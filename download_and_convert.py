@@ -28,7 +28,7 @@ def download_and_convert(title, output_dir, userid, userkey):
         if book.get('extension') == 'epub':
             try:
                 filename, content = Z.downloadBook(book)
-                epub_path = os.path.join(output_dir, filename)
+                epub_path = os.path.join(output_dir, title + '.epub')
                 with open(epub_path, 'wb') as f:
                     f.write(content)
                 print(f"Downloaded {filename} to {epub_path}")
