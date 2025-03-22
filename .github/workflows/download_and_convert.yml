@@ -29,8 +29,15 @@ jobs:
               apt-get install -y python3-pip git xvfb && echo 'Install done' && \
               python3 -m pip install requests --break-system-packages && echo 'Pip done' && \
               python3 -m pip install git+https://github.com/sunew130/Zlibrary-API.git@dev --break-system-packages && \
-              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output /workdir/downloads --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
-    
+              mkdir -p $OUTPUT_PATH && \
+              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'"
+    # 产物上传优化
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ebook-${{ github.event.inputs.title }}
+        path: ${{ env.OUTPUT_PATH }}    
+               
     # 新增：微信通知模块
     - name: Send WeChat notification
       env:
@@ -40,9 +47,4 @@ jobs:
             python3 push.py \
             "【电子书下载完成】${{ github.event.inputs.title }}.epub 已就绪\n🔗下载地址：$DOWNLOAD_URL\n📖打开方式：微信→文件→其他应用打开→选择阅读器" ${{ secrets.PUSH_METHOD }}
 
-    # 产物上传优化
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ebook-${{ github.event.inputs.title }}
-        path: ${{ env.OUTPUT_PATH }}
+
