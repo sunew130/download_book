@@ -94,7 +94,7 @@ class PushNotification:
 def push(content, method):
     """统一推送接口，支持 PushPlus、Telegram 和 WxPusher"""
     notifier = PushNotification()
-    print(f"WXPUSHER_SPT {WXPUSHER_SPT} method {method} content {content}")
+    print(f"WXPUSHER_SPT {WXPUSHER_SPT} method {method} content {content}", flush=True)
     if method == "pushplus":
         token = PUSHPLUS_TOKEN
         return notifier.push_pushplus(content, token)
