@@ -32,18 +32,24 @@ jobs:
               mkdir -p $OUTPUT_PATH && \
               xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}' && \
               echo 'Download complete, listing files:' && \
-              ls -la $OUTPUT_PATH"
+              ls -la $OUTPUT_PATH && \
+              echo 'Listing parent directory /workdir/downloads:' && \
+              ls -la /workdir/downloads"
               
     - name: Debug output path
       run: |
-              echo "OUTPUT_PATH is: ${{ env.OUTPUT_PATH }}"
-              ls -la ${{ env.OUTPUT_PATH }}           
-    # 产物上传优化
+            echo "Checking OUTPUT_PATH: ${{ env.OUTPUT_PATH }}"
+            echo "Mapped host path: ./downloads/$(basename ${{ env.OUTPUT_PATH }})"
+            ls -la ./downloads/$(basename ${{ env.OUTPUT_PATH }}) || echo "No files found in ./downloads/$(basename ${{ env.OUTPUT_PATH }})"
+            echo "Listing ./downloads directory:"
+            ls -la ./downloads || echo "No ./downloads directory found"
+            
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ebook-${{ github.event.inputs.title }}
-        path: "${{ env.OUTPUT_PATH }}/*"   
+          name: ebook-${{ github.event.inputs.title }}
+          path: "./downloads/$(basename ${{ env.OUTPUT_PATH }})/*"
+          if-no-files-found: warn  
 
     # 新增：微信通知模块
     - name: Send WeChat notification
