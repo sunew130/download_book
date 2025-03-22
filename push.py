@@ -103,6 +103,7 @@ def push(content, method):
         chat_id = TELEGRAM_CHAT_ID
         return notifier.push_telegram(content, bot_token, chat_id)
     elif method == "wxpusher":
+        logger.info("WXPUSHER_SPT: %s  content:%s", WXPUSHER_SPT, content)
         return notifier.push_wxpusher(content, WXPUSHER_SPT)
     else:
         raise ValueError("❌ 无效的通知渠道，请选择 'pushplus'、'telegram' 或 'wxpusher'")
