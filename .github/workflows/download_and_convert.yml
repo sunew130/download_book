@@ -45,7 +45,7 @@ jobs:
                 echo "Listing ./downloads directory:"
                 ls -la ./downloads || echo "No ./downloads directory found"
                 echo "Testing artifact path with wildcard:"
-                ls -la "./downloads/$BASENAME/*.epub" || echo "No .epub files found with wildcard"
+                ls -la ./downloads/$BASENAME/*.epub || echo "No .epub files found with wildcard"
         
     - name: Fix permissions
       run: |
