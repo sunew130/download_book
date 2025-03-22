@@ -36,8 +36,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}
-        path: ${{ env.OUTPUT_PATH }}    
-               
+        path: ${{ env.OUTPUT_PATH }}/*    
+
     # 新增：微信通知模块
     - name: Send WeChat notification
       env:
