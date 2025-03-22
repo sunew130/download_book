@@ -56,8 +56,10 @@ jobs:
       env:
         WXPUSHER_SPT: ${{ secrets.WXPUSHER_SPT }}
       run: |
-            DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            python3 push.py \
-            "【电子书下载完成】${{ github.event.inputs.title }}.epub 已就绪\n🔗下载地址：$DOWNLOAD_URL\n📖打开方式：微信→文件→其他应用打开→选择阅读器" ${{ secrets.PUSH_METHOD }}
-
+          python3 -m pip install requests  # 根据需要添加依赖
+          DOWNLOAD_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          MESSAGE="【电子书下载完成】${{ github.event.inputs.title }}.epub 已就绪\n🔗下载地址：$DOWNLOAD_URL\n📖打开方式：微信→文件→其他应用打开→选择阅读器"
+          echo "Running push.py with message: $MESSAGE"
+          echo "Push method: ${{ secrets.PUSH_METHOD }}"
+          python3 push.py "$MESSAGE" "${{ secrets.PUSH_METHOD }}" || echo "push.py failed with exit code $?"
 
