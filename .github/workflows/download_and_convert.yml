@@ -24,13 +24,13 @@ jobs:
     # Calibre 容器优化版
     - name: Run Calibre container
       run: | 
-            docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "\
+            docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c " \
               apt-get update && echo 'Update done' && \
               apt-get install -y python3-pip git xvfb && echo 'Install done' && \
               python3 -m pip install requests --break-system-packages && echo 'Pip done' && \
               python3 -m pip install git+https://github.com/sunew130/Zlibrary-API.git@dev --break-system-packages && \
               mkdir -p $OUTPUT_PATH && \
-              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}'" && \
+              xvfb-run python3 /workdir/download_and_convert.py --title '${{ github.event.inputs.title }}' --output $OUTPUT_PATH --userid '${{ secrets.ZLIBRARY_USERID }}' --userkey '${{ secrets.ZLIBRARY_USERKEY }}' && \
               echo 'Download complete, listing files:' && \
               ls -la $OUTPUT_PATH"
               
