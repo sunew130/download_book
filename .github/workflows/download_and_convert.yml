@@ -56,14 +56,14 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}-exact
-        path: ./downloads/$BASENAME/*.epub
+        path: ./downloads/$(BASENAME)/${{ github.event.inputs.title }}.epub
         if-no-files-found: warn
           
     - name: Upload artifact (exact)
       uses: actions/upload-artifact@v4
       with:
         name: ebook-${{ github.event.inputs.title }}-exact
-        path: ./downloads/$BASENAME//${{ github.event.inputs.title }}.epub
+        path: ./downloads/$(BASENAME)/${{ github.event.inputs.title }}.epub
         if-no-files-found: warn
 
     # 新增：微信通知模块
