@@ -58,6 +58,7 @@ jobs:
       with:
         name: ebook-${{ github.event.inputs.title }}-exact
         path: ./downloads/${{env.BASENAME}}/${{ github.event.inputs.title }}.epub
+        compression-level: 0  # 0 表示不压缩        
         if-no-files-found: warn 
 
     # 新增：微信通知模块
