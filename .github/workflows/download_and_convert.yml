@@ -53,12 +53,13 @@ jobs:
                 sudo chmod -R 755 ./downloads
                 ls -la ./downloads/$(basename ${{ env.OUTPUT_PATH }}) || echo "Failed to list directory after chmod"
         
-    - name: Upload artifact (wildcard)
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ebook-${{ github.event.inputs.title }}-exact
+        name: ebook-${{ github.event.inputs.title }}
         path: ./downloads/${{env.BASENAME}}/${{ github.event.inputs.title }}.epub
-        compression-level: 0  # 0 表示不压缩        
+        compression-level: 0  # 0 表示不压缩  
+        clean-name: true  # 自动清理特殊字符        
         if-no-files-found: warn 
 
     # 新增：微信通知模块
