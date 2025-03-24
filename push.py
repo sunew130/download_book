@@ -116,7 +116,7 @@ if __name__ == "__main__":
         print("错误：缺少参数！需要两个参数：内容 和 推送方法", flush=True)
         sys.exit(1)
     
-    content = sys.argv
-    method = sys.argv
+    content = sys.argv[1]
+    method = sys.argv[2]
     print(f"调试：参数内容={content}, 方法={method}", flush=True)
     push(content, method)  # 调用函数
