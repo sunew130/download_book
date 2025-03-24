@@ -108,3 +108,14 @@ def push(content, method):
         return notifier.push_wxpusher(content, WXPUSHER_SPT)
     else:
         raise ValueError("❌ 无效的通知渠道，请选择 'pushplus'、'telegram' 或 'wxpusher'")
+
+if __name__ == "__main__":
+    # 确保从命令行获取参数
+    if len(sys.argv) < 3:
+        print("错误：缺少参数！需要两个参数：内容 和 推送方法", flush=True)
+        sys.exit(1)
+    
+    content = sys.argv
+    method = sys.argv
+    print(f"调试：参数内容={content}, 方法={method}", flush=True)
+    push(content, method)  # 调用函数
