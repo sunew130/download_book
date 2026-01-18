@@ -22,7 +22,7 @@ The system is designed for automated execution through GitHub Actions workflows,
 | **config.py** | Configuration management - handles environment variables, API tokens, cookies, headers, and reading parameters. Provides a central place for all system configurations. |
 | **download_and_convert.py** | Z-Library integration - searches for books, downloads EPUB (preferred) or PDF formats, and converts PDFs to EPUB using Calibre's `ebook-convert` tool. |
 | **push.py** | Multi-platform notification system - supports PushPlus, Telegram, and WxPusher for sending download completion notifications. |
-| **search.py** | Gutenberg catalog search - downloads Project Gutenberg's catalog, filters books, and batch downloads EPUB files. |
+| **search.py** | Gutenberg catalog search - downloads Project Gutenberg's catalog, filters books (excludes Jane Austen, only Text type), and batch downloads EPUB files. |
 
 ### Configuration & Workflows
 
@@ -67,12 +67,13 @@ Filter books (exclude specific authors, only Text type)
 Batch download EPUB files
 ```
 
-### Workflow 3: WeChat Reading Automation
+### Workflow 3: WeChat Reading Automation (Configuration Only)
 
-The `config.py` includes WeChat reading automation parameters:
-- Simulates reading sessions with configurable read count (default: 120/60min)
-- Uses authenticated headers and cookies for WeChat reading API
-- Sends periodic read events to maintain reading streaks
+The `config.py` includes WeChat reading automation configuration:
+- Defines reading session parameters (default: 120 reads per 60 minutes)
+- Stores authenticated headers and cookies for WeChat reading API
+- Contains sample reading event payload structure
+- **Note**: Active implementation not present in current codebase; configuration is prepared for future integration
 
 ---
 
@@ -101,8 +102,8 @@ The system uses environment variables for secure configuration. All values can b
 ### Z-Library Configuration (download_and_convert.py)
 
 Required as command-line arguments or GitHub Secrets:
-- **--userid**: Z-Library `remix_userid`
-- **--userkey**: Z-Library `remix_userkey`
+- **--userid** (command-line) / **ZLIBRARY_USERID** (GitHub Secret): Z-Library `remix_userid`
+- **--userkey** (command-line) / **ZLIBRARY_USERKEY** (GitHub Secret): Z-Library `remix_userkey`
 - **--title**: Book title to search for
 - **--output**: Output directory for downloaded files
 
@@ -142,7 +143,7 @@ import logging
 ```
 
 ### External Python Packages
-- **Zlibrary**: Custom Z-Library API wrapper (installed from GitHub)
+- **Z-Library**: Custom Z-Library API wrapper (installed from GitHub)
   - Repository: `https://github.com/sunew130/Zlibrary-API.git@dev`
 - **requests**: HTTP library for API calls
 
@@ -241,8 +242,8 @@ docker run --rm -v $(pwd):/workdir linuxserver/calibre:latest /bin/bash -c "
 
 ### Notification System
 The push system implements:
-- **Retry Logic**: 5 attempts with 3-6 minute delays (PushPlus, WxPusher)
-- **Proxy Fallback**: Telegram tries proxy first, then direct connection
+- **Retry Logic**: 5 attempts with randomized 3-6 minute delays (180-360 seconds) for PushPlus and WxPusher only
+- **Proxy Fallback**: Telegram tries proxy first, then direct connection (no retry logic)
 - **Logging**: Comprehensive logging for debugging failed pushes
 
 ### Security Considerations
